@@ -1,10 +1,14 @@
-import pandas as pd, praw, requests, os
+import pandas as pd, praw, requests, os, psycopg2
 from PIL import Image
 
 
 class Builder:
     def __init__(self):
-        pass
+        self.reddit = praw.Reddit(
+            client_id="9retr8Vic7M5LA",
+            client_secret="KkiSZ4mezYdkSEMkO9s1S12-7mN8jw",
+            user_agent="Mysterio",
+        )
 
     def validate_subreddit(self, sub) -> bool:
         url = "https://www.reddit.com/" + sub._path
@@ -19,19 +23,13 @@ class Builder:
     def process_csv(self, file_path: str) -> None:
         # Set up credentials and read CSV
         df = pd.read_csv(file_path, header=None, names=["sub", "count"])
-        reddit = praw.Reddit(
-            client_id="9retr8Vic7M5LA",
-            client_secret="KkiSZ4mezYdkSEMkO9s1S12-7mN8jw",
-            user_agent="Mysterio",
-        )
-
         for _, row in df.iterrows():
             # Create a subreddit instance and directory for all relevant thumbnails
             sub, count = row
             directory_path = os.path.join(os.getcwd(), sub)
             if not os.path.isdir(directory_path):
                 os.mkdir(directory_path)
-            subreddit = reddit.subreddit(sub)
+            subreddit = self.reddit.subreddit(sub)
             #Validate the Subreddit and make sure it exists. Otherwise go on to the next row:
             if not self.validate_subreddit(subreddit):
                 continue
