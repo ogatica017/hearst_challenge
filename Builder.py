@@ -47,6 +47,7 @@ class Builder:
                         os.path.join(directory_path, submission.name), "PNG"
                     )
                 except:
+                    pass
                     print(
                         "Submission with ID: ",
                         submission.name,
@@ -55,4 +56,4 @@ class Builder:
 
 
 x = Builder()
-x.process_csv("data.csv")
+x.process_csv("data2.csv")
