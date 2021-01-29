@@ -6,6 +6,16 @@ class Builder:
     def __init__(self):
         pass
 
+    def validate_subreddit(self, sub) -> bool:
+        url = "https://www.reddit.com/" + sub._path
+        response = requests.get(url)
+        code = response.status_code
+        if  code < 200 or code > 299 and code != 502:
+            print(sub._path, " is not a valid subreddit and will not be included in the database.")
+            return False
+        return True
+
+
     def process_csv(self, file_path: str) -> None:
         # Set up credentials and read CSV
         df = pd.read_csv(file_path, header=None, names=["sub", "count"])
@@ -22,8 +32,11 @@ class Builder:
             if not os.path.isdir(directory_path):
                 os.mkdir(directory_path)
             subreddit = reddit.subreddit(sub)
+            #Validate the Subreddit and make sure it exists. Otherwise go on to the next row:
+            if not self.validate_subreddit(subreddit):
+                continue
             # Iterate throught the count of top posts
-            for submission in subreddit.top("all", limit=count):
+            for submission in subreddit.top("all", limit= count):
                 # First process the thumbnail appropriately by resizing and saving to directory
                 try:
                     img = Image.open(
