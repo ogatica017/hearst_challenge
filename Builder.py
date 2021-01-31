@@ -27,24 +27,28 @@ class Builder:
                 os.mkdir(directory_path)
             # Extract thumbnails from submissions
             self.extract_thumbnails(subreddit, count, directory_path)
-            #Build a dataframe object for database processing
+            # Build a dataframe object for database processing
             df = self.build_df(subreddit, count)
-    
+
     def validate_subreddit(self, sub) -> bool:
         url = "https://www.reddit.com/" + sub._path
         response = requests.get(url)
         code = response.status_code
-        if  code < 200 or code > 299 and code != 502:
-            print(sub._path, " is not a valid subreddit and will not be included in the database.")
+        if code < 200 or code > 299 and code != 502:
+            print(
+                sub._path,
+                " is not a valid subreddit and will not be included in the database.",
+            )
             return False
         return True
-        
+
     def build_df(self, subreddit, count):
         top_submissions = subreddit.top("all", limit=count)
         all_keys = set()
 
         def is_valid_type(value) -> bool:
-            if value in [str, int, bool, float, None]: return True
+            if value in [str, int, bool, float, None]:
+                return True
             return False
 
         for submission in top_submissions:
@@ -68,22 +72,21 @@ class Builder:
         return df
 
     def extract_thumbnails(self, subreddit, count, path) -> None:
-        top_all_time = subreddit.top("all", limit= count)
+        top_all_time = subreddit.top("all", limit=count)
         for submission in top_all_time:
             try:
-                img = Image.open(
-                    requests.get(submission.thumbnail, stream=True).raw
-                )
+                img = Image.open(requests.get(submission.thumbnail, stream=True).raw)
                 img_resized = img.resize((100, 100))
-                img_resized.save(
-                    os.path.join(path, submission.name), "PNG"
-                )
+                img_resized.save(os.path.join(path, submission.name), "PNG")
             except:
                 print(
                     "Submission with ID: ",
                     submission.name,
-                    " from r/" + subreddit.display_name + " does not have a thumbnail image.",
-                )            
+                    " from r/"
+                    + subreddit.display_name
+                    + " does not have a thumbnail image.",
+                )
+
 
 x = Builder()
 x.process_csv("data.csv")
