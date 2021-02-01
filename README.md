@@ -4,7 +4,9 @@ stores all the information returned in a PostgreSQL database. This tool also dow
 the subreddit, cropping them to 100x100 pixels
 
 # How to Use?
-Create an instance of the `Builder` class. Run `Builder.process_csv(*path*)`, where *path* is the path to the `subreddit`, `count` CSV file.
+Create an instance of the `Builder(user, password)` class. Pass in the *user* and *password* needed to access PostgreSQL locally.
+
+Run `Builder.process_csv(path)`, where *path* is the path to the `subreddit`, `count` CSV file.
 
 # Important Note:
-This tool can only be used to create a database. It is not designed to insert values into an existing database.
+This tool can ONLY be used to create a database locally. It is not designed to insert values into an existing database.
