@@ -250,7 +250,3 @@ class Builder:
                     % postgreSQLTable
                 )
         postgreSQLConnection.close()
-
-
-x = Builder("postgres", "ValarMorghul1$")
-x.process_csv("data2.csv")
